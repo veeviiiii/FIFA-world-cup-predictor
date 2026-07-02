@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FIFA World Cup '26 AI Predictor</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#e0e8f0",
+                        "surface-container": "#141c2e",
+                        "on-surface-variant": "#a0b4c4",
+                        "surface-container-low": "#111828",
+                        "secondary": "#88b4cc",
+                        "surface-tint": "#7dd3fc",
+                        "tertiary-fixed": "#e8d0ff",
+                        "tertiary-container": "#3d2060",
+                        "on-secondary": "#001f2e",
+                        "inverse-on-surface": "#0a0e1a",
+                        "surface": "#0f1524",
+                        "secondary-fixed-dim": "#88b4cc",
+                        "on-secondary-fixed-variant": "#2a4a5e",
+                        "on-primary-fixed": "#001f2e",
+                        "surface-container-lowest": "#0a0e1a",
+                        "on-error-container": "#ffb3b3",
+                        "inverse-primary": "#0a4c6e",
+                        "secondary-fixed": "#c0d8e8",
+                        "surface-variant": "#1a2438",
+                        "on-secondary-fixed": "#0d1f2b",
+                        "primary-fixed-dim": "#7dd3fc",
+                        "surface-container-highest": "#202c42",
+                        "on-primary-container": "#c8eaff",
+                        "surface-dim": "#0f1524",
+                        "on-error": "#1a0000",
+                        "on-tertiary": "#1a002e",
+                        "inverse-surface": "#e0e8f0",
+                        "on-secondary-container": "#c0d8e8",
+                        "tertiary": "#c8a0f0",
+                        "primary": "#7dd3fc",
+                        "primary-fixed": "#c8eaff",
+                        "on-tertiary-fixed-variant": "#4d2a73",
+                        "secondary-container": "#1a3a4e",
+                        "on-tertiary-container": "#e8d0ff",
+                        "on-surface": "#e0e8f0",
+                        "outline-variant": "#2a3a48",
+                        "on-primary-fixed-variant": "#004d73",
+                        "surface-container-high": "#1a2438",
+                        "primary-container": "#0e4d6e",
+                        "outline": "#4a6070",
+                        "on-tertiary-fixed": "#1a002e",
+                        "error-container": "#3d1414",
+                        "surface-bright": "#1a2438",
+                        "on-primary": "#001f2e",
+                        "tertiary-fixed-dim": "#c8a0f0",
+                        "error": "#ff6b6b",
+                        "background": "#0a0e1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(15, 21, 36, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(125, 211, 252, 0.1);
+        }
+
+        .glass-panel-elevated {
+            background: rgba(15, 21, 36, 0.75);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(125, 211, 252, 0.15);
+        }
+
+        .glow-hover:hover {
+            box-shadow: 0 0 30px rgba(125, 211, 252, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #7dd3fc;
+            border-bottom: 2px solid #7dd3fc;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-surface font-body antialiased min-h-screen">
+    <!-- TopAppBar -->
+    <header
+        class="bg-surface/60 backdrop-blur-xl border-b border-primary/10 shadow-[0_0_30px_rgba(125,211,252,0.05)] fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16">
+        <div class="text-xl font-headline font-semibold tracking-tight text-primary">
+            FIFA World Cup '26 AI Predictor
+        </div>
+        <div class="flex gap-4 items-center h-full pt-1">
+            <button
+                class="tab-btn active h-full px-4 text-on-surface-variant hover:text-on-surface hover:bg-primary/10 transition-all duration-200"
+                data-target="view-fixtures">
+                Upcoming Fixtures
+            </button>
+            <button
+                class="tab-btn h-full px-4 text-on-surface-variant hover:text-on-surface hover:bg-primary/10 transition-all duration-200"
+                data-target="view-stats">
+                Player Stats
+            </button>
+        </div>
+        <div class="flex gap-4">
+            <button class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+            <button class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </div>
+    </header>
+    <main class="pt-24 px-6 pb-12 max-w-7xl mx-auto">
+        <!-- View 1: Upcoming Fixtures -->
+        <section class="space-y-6" id="view-fixtures">
+            <h2 class="text-2xl font-headline font-semibold tracking-wide text-primary">AI Match Predictions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="fixtures_container">
+                <!-- Card 1 -->
+                <div class="glass-panel rounded-xl p-6 glow-hover transition-all duration-300">
+                    <div class="text-xs text-on-surface-variant uppercase tracking-wider mb-4 flex justify-between">
+                        <span>Quarter-Final</span>
+                        <span>14:00 GMT</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col items-center gap-2">
+                            <div
+                                class="w-12 h-12 rounded-full overflow-hidden bg-surface-container flex items-center justify-center border border-primary/20">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="A stylized minimalist digital flag icon representing Brazil, glowing with soft neon green and yellow accents on a dark icy glassmorphic background, high-end sports broadcast aesthetic, crisp details."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuASqAV6sEwQnAXwC7zjJ2q_MiM3rMGgliaS9NG4AcfrlLbcm1snZ97FKGmDDIRLKWUcAOkpg-47gu4u_BqJ2Odfntev8WzaCLwVvMEK72G59kHq8ut9gjIfkCL8pCAnM_MjOavFHeoytgCacEhFguCm_zCKcTgxQUJaMw2wxGiGJ8tU9VWaiBX1m3z0zq6UEJ1fmkxm633QcBnvUVmsXMyXGYPwjkZ4OkfSUylJajEZedvW00Wd85gTkFiAgPnf76dn8pBZ8WoK8hk" />
+                            </div>
+                            <span class="font-bold">BRA</span>
+                        </div>
+                        <div class="text-xl font-headline text-on-surface-variant">VS</div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div
+                                class="w-12 h-12 rounded-full overflow-hidden bg-surface-container flex items-center justify-center border border-primary/20">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="A stylized minimalist digital flag icon representing France, glowing with soft neon blue and red accents on a dark icy glassmorphic background, high-end sports broadcast aesthetic, crisp details."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCws5V8GrXdLzPFTqMh9huCSOb-k3ePt7uQCTzxivRSciMpmHC7ESIYxDibZTfWAOtl-8HcS5tf-QpYvbksxAOxSsmJ0ud3aBKjHDr4Kj5wGgfmhQKKWaTbpLl35sa6lux1BiavInXOkJMrspeZI1PGaYzolM8Xe5g9xIrUDpUWSkxBecQv_7ab7MroHIUuCgPZfxUFYEm0Lb8A-3sINnmNwZs1jmxxgSYhlL5Hm3tTkoHpGQLci0wFnqRxj1mwBaWxzeLtNmRph0Y" />
+                            </div>
+                            <span class="font-bold">FRA</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm text-on-surface-variant">
+                            <span>Win Probability</span>
+                            <span class="text-primary font-bold">58% - 42%</span>
+                        </div>
+                        <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden flex">
+                            <div class="h-full bg-primary" style="width: 58%"></div>
+                            <div class="h-full bg-tertiary" style="width: 42%"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-panel rounded-xl p-6 glow-hover transition-all duration-300">
+                    <div class="text-xs text-on-surface-variant uppercase tracking-wider mb-4 flex justify-between">
+                        <span>Quarter-Final</span>
+                        <span>18:00 GMT</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col items-center gap-2">
+                            <div
+                                class="w-12 h-12 rounded-full overflow-hidden bg-surface-container flex items-center justify-center border border-primary/20">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="A stylized minimalist digital flag icon representing Argentina, glowing with soft neon light blue and white accents on a dark icy glassmorphic background, high-end sports broadcast aesthetic, crisp details."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDfbK8ScuqCkZaVuJz54-FR2SOmPpJ_lc7klGNAyy4Td1_DbIIhYm3BIj_OHsEOI-VlST84IebncDuQ6ldm3jgLc5bphhwWVZdL2qoJZoi9MtopvtzWLvw3g4kna5Oc5qOyRM9kU3WhDeUvhc61kPxVUW8olhkkzVi8zZ6KNBdc7JCJG2K8iUiYfNS2Mhb_8h3vK3jV2yZ7qc7NfqTHXcD_l8QWfKZ6X7_Hrp4p4cjBwJKjrXoY-lY-jWanQojuybl3WC0ehVqGOQ" />
+                            </div>
+                            <span class="font-bold">ARG</span>
+                        </div>
+                        <div class="text-xl font-headline text-on-surface-variant">VS</div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div
+                                class="w-12 h-12 rounded-full overflow-hidden bg-surface-container flex items-center justify-center border border-primary/20">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="A stylized minimalist digital flag icon representing Spain, glowing with soft neon red and yellow accents on a dark icy glassmorphic background, high-end sports broadcast aesthetic, crisp details."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCVQ874us9ORqhoJxow3m5yVXndVWr3KQ4WtLEzn_8ZKkXp9KvRwSNnN3-fifnoK0StuGKUpSOUpF_uf9P_tHm3Cq1VV_gMRFHmYVTs0hQ9RMo39msa80fPObsxYqfJaLcYgBvgMbZg3wbgJ0YkEIrRrTd1ALl7LJ1lQjJ6sosHjHWSllTVmsO2Imvr1-QCMcEfXZ5CynJtO73ut1bwaUHtHvAT1Gujl4cwbeAV_nInhmJjd-Y-1p8FPceQF3UrG5lUoHpFMkNaag" />
+                            </div>
+                            <span class="font-bold">ESP</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm text-on-surface-variant">
+                            <span>Win Probability</span>
+                            <span class="text-primary font-bold">51% - 49%</span>
+                        </div>
+                        <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden flex">
+                            <div class="h-full bg-primary" style="width: 51%"></div>
+                            <div class="h-full bg-tertiary" style="width: 49%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- View 2: Player Stats -->
+        <section class="hidden space-y-6" id="view-stats">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-headline font-semibold tracking-wide text-primary">Live Player Analytics</h2>
+                <div class="relative w-64">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                    <input
+                        class="w-full bg-surface/50 border border-primary/20 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-primary/50 text-on-surface backdrop-blur-md"
+                        placeholder="Search player..." type="text" />
+                </div>
+            </div>
+            <div class="glass-panel-elevated rounded-xl overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-primary/10 text-sm text-on-surface-variant">
+                            <th class="py-4 px-6 font-semibold">Player Name</th>
+                            <th class="py-4 px-6 font-semibold">Country</th>
+                            <th class="py-4 px-6 font-semibold">Position</th>
+                            <th class="py-4 px-6 font-semibold text-primary">Current Form Score</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm" id="players_table_body">
+                        <tr class="border-b border-primary/5 hover:bg-primary/5 transition-colors">
+                            <td class="py-4 px-6 font-medium">Vinícius Júnior</td>
+                            <td class="py-4 px-6 text-on-surface-variant">Brazil</td>
+                            <td class="py-4 px-6 text-on-surface-variant">FW</td>
+                            <td class="py-4 px-6 font-bold text-primary flex items-center gap-3">
+                                94.2
+                                <span
+                                    class="px-2 py-1 text-[10px] uppercase tracking-wider rounded bg-green-500/20 text-green-400 border border-green-500/30">Hot</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-primary/5 hover:bg-primary/5 transition-colors">
+                            <td class="py-4 px-6 font-medium">Kylian Mbappé</td>
+                            <td class="py-4 px-6 text-on-surface-variant">France</td>
+                            <td class="py-4 px-6 text-on-surface-variant">FW</td>
+                            <td class="py-4 px-6 font-bold text-primary flex items-center gap-3">
+                                92.8
+                                <span
+                                    class="px-2 py-1 text-[10px] uppercase tracking-wider rounded bg-green-500/20 text-green-400 border border-green-500/30">Hot</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-primary/5 hover:bg-primary/5 transition-colors">
+                            <td class="py-4 px-6 font-medium">Jude Bellingham</td>
+                            <td class="py-4 px-6 text-on-surface-variant">England</td>
+                            <td class="py-4 px-6 text-on-surface-variant">MF</td>
+                            <td class="py-4 px-6 font-bold text-primary flex items-center gap-3">
+                                78.5
+                                <span
+                                    class="px-2 py-1 text-[10px] uppercase tracking-wider rounded bg-red-500/20 text-red-400 border border-red-500/30">Cold</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const views = {
+                'view-fixtures': document.getElementById('view-fixtures'),
+                'view-stats': document.getElementById('view-stats')
+            };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+
+                    // Hide all views
+                    Object.values(views).forEach(view => {
+                        view.classList.add('hidden');
+                    });
+
+                    // Show target view
+                    const targetId = tab.getAttribute('data-target');
+                    if (views[targetId]) {
+                        views[targetId].classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
